@@ -41,7 +41,7 @@ func TestServeBatchQuery(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.Name, func(t *testing.T) {
-			handler, err := New(ctx, next, cfg, "demo-plugin")
+			handler, err := New(ctx, next, cfg, "traefik-plugin-sec-hasura")
 			if err != nil {
 				t.Fatal(err)
 			}

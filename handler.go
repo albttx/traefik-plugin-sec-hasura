@@ -11,34 +11,43 @@ import (
 
 // Config the plugin configuration.
 type Config struct {
-	Headers map[string]string `json:"headers,omitempty"`
+	GraphQLPath string `json:"graphql_path,omitempty"`
 }
 
 // CreateConfig creates the default plugin configuration.
 func CreateConfig() *Config {
 	return &Config{
-		Headers: make(map[string]string),
+		GraphQLPath: "/v1/graphql",
 	}
 }
 
-// HasuraPLugin a HasuraPLugin plugin.
-type HasuraPLugin struct {
+// HasuraPlugin a HasuraPlugin plugin.
+type HasuraPlugin struct {
+	cfg Config
+
 	next    http.Handler
 	headers map[string]string
 	name    string
 }
 
-// New created a new HasuraPLugin plugin.
+// New created a new HasuraPlugin plugin.
 func New(ctx context.Context, next http.Handler, config *Config, name string) (http.Handler, error) {
-	return &HasuraPLugin{
-		headers: config.Headers,
-		next:    next,
-		name:    name,
+	return &HasuraPlugin{
+		cfg: *config,
+
+		next: next,
+		name: name,
 	}, nil
 }
 
-func (a *HasuraPLugin) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
-	os.Stderr.WriteString("ServeHTTP ==========================\n")
+func (a *HasuraPlugin) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
+	os.Stderr.WriteString("ServeHTTP ========================== " + req.URL.Path + "\n")
+
+	// ignore if it's not graphql endpoint
+	if req.URL.Path != a.cfg.GraphQLPath {
+		a.next.ServeHTTP(rw, req)
+		return
+	}
 
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
