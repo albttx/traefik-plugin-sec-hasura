@@ -1,0 +1,8 @@
+displayName: Hasura security plugins
+type: middleware
+iconPath: .github/logo.png
+
+summary: "Traefik plugin to ensure some security with hasura"
+
+import: github.com/albttx/traefik-plugin-sec-hasura
+
