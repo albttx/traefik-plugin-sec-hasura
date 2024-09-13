@@ -11,13 +11,15 @@ import (
 
 // Config the plugin configuration.
 type Config struct {
-	GraphQLPath string `json:"graphql_path,omitempty"`
+	GraphQLPath   string   `json:"graphql_path,omitempty"`
+	IgnoreHeaders []string `json:"ignore_headers"`
 }
 
 // CreateConfig creates the default plugin configuration.
 func CreateConfig() *Config {
 	return &Config{
-		GraphQLPath: "/v1/graphql",
+		GraphQLPath:   "/v1/graphql",
+		IgnoreHeaders: []string{},
 	}
 }
 
@@ -47,6 +49,14 @@ func (p *HasuraPlugin) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	if req.URL.Path != p.cfg.GraphQLPath {
 		p.next.ServeHTTP(rw, req)
 		return
+	}
+
+	// ignore if some headers are specify
+	for _, h := range p.cfg.IgnoreHeaders {
+		if req.Header.Get(h) != "" {
+			p.next.ServeHTTP(rw, req)
+			return
+		}
 	}
 
 	body, err := io.ReadAll(req.Body)
