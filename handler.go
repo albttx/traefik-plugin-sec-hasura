@@ -43,6 +43,11 @@ func New(ctx context.Context, next http.Handler, config *Config, name string) (h
 }
 
 func (p *HasuraPlugin) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
+	if req.Method == "OPTIONS" {
+		p.next.ServeHTTP(rw, req)
+		return
+	}
+
 	// ignore if it's not graphql endpoint
 	if req.URL.Path != p.cfg.GraphQLPath {
 		p.next.ServeHTTP(rw, req)
