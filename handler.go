@@ -70,6 +70,11 @@ func (p *HasuraPlugin) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	}
 	req.Body = io.NopCloser(bytes.NewBuffer(body))
 
+	if len(body) == 0 {
+		p.next.ServeHTTP(rw, req)
+		return
+	}
+
 	var data interface{}
 	if err := json.Unmarshal(body, &data); err != nil {
 		os.Stderr.WriteString(err.Error())
