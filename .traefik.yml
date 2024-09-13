@@ -7,5 +7,5 @@ summary: "Traefik plugin to ensure some security with hasura"
 import: github.com/albttx/traefik-plugin-sec-hasura
 
 testData:
-  graphql_path: "/v1/graphql"
-  ignore_headers: ["x-hasura-admin-secret"]
+  GraphQLPath: "/v1/graphql"
+  IgnoreHeaders: ["x-hasura-admin-secret"]
